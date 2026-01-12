@@ -1,4 +1,7 @@
-﻿
+﻿using EventManagement.Infrastrure.Data;
+using EventManagement.Infrastrure.Seeder;
+using Microsoft.EntityFrameworkCore;
+
 namespace EventManagement.Presentation
 {
     public class Program
@@ -6,6 +9,11 @@ namespace EventManagement.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add DbContext
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            );
 
             // Add services to the container.
 
@@ -26,6 +34,12 @@ namespace EventManagement.Presentation
 
             var app = builder.Build();
 
+            // Seed Database
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                DbSeeder.Seed(db);  // call our seeder method
+            }
 
 
 
