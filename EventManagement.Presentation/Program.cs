@@ -1,6 +1,20 @@
-﻿using EventManagement.Infrastrure.Data;
+﻿using EventManagement.Application.Abstraction.Persistences.IRepositories;
+using EventManagement.Application.Features.venue.command.createVenue;
+using EventManagement.Application.Interfaces.IServices;
+using EventManagement.Application.Mapping;
+using EventManagement.Application.Services;
+using EventManagement.Infrastrure.Data;
+using EventManagement.Infrastrure.Security;
 using EventManagement.Infrastrure.Seeder;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MediatR;
+using System.Text;
+using EventManagement.Infrastrure.Persistence.Repository;
+
+
 
 namespace EventManagement.Presentation
 {
@@ -18,8 +32,39 @@ namespace EventManagement.Presentation
             // Add services to the container.
 
             builder.Services.AddControllers();
+            // Register AutoMapper profiles from Application mapping assembly
+            builder.Services.AddAutoMapper(typeof(VenueProfile).Assembly);
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             //builder.Services.AddOpenApi();
+
+
+          
+
+
+
+
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IVenueRepository, VenueRepository>();
+            builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+
+            // Register MediatR handlers (v11 API)
+            builder.Services.AddMediatR(typeof(createVenueCommand).Assembly);
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["TokenKey"] ?? string.Empty)
+                        ),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
 
 
@@ -59,6 +104,7 @@ namespace EventManagement.Presentation
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

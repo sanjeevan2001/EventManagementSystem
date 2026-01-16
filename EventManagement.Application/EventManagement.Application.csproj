@@ -8,7 +8,24 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventManagement.Domain\EventManagement.Domain.csproj" />
-	  <ProjectReference Include="..\EventManagement.Infrastrure\EventManagement.Infrastrure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.0" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\assert\DTOs\" />
+    <Folder Include="Features\bookingpackage\DTOs\" />
+    <Folder Include="Features\booking\DTOs\" />
+    <Folder Include="Features\events\DTOs\" />
+    <Folder Include="Features\item\DTOs\" />
+    <Folder Include="Features\package\DTOs\" />
   </ItemGroup>
 
 </Project>

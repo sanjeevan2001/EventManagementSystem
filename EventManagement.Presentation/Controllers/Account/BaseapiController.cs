@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EventManagement.Presentation.Controllers
+namespace EventManagement.Presentation.Controllers.Account
 {
     [Route("api/[controller]")]
     [ApiController]

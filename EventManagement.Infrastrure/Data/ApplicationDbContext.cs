@@ -1,5 +1,6 @@
 ﻿using EventManagement.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +9,7 @@ namespace EventManagement.Infrastrure.Data
 {
     public class ApplicationDbContext : DbContext
     {
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Venue> Venues => Set<Venue>();
         public DbSet<Event> Events => Set<Event>();
         public DbSet<Package> Packages => Set<Package>();
@@ -22,6 +20,24 @@ namespace EventManagement.Infrastrure.Data
         public DbSet<Client> Clients => Set<Client>();
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<BookingPackage> BookingPackages => Set<BookingPackage>();
+
+        private static string? ToBase64OrNull(byte[]? value)
+        {
+            return value == null ? null : Convert.ToBase64String(value);
+        }
+
+        private static byte[]? FromBase64OrNull(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            try
+            {
+                return Convert.FromBase64String(value);
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -105,8 +121,37 @@ namespace EventManagement.Infrastrure.Data
 
 
             // ===============================
-            // Decimal Precision Configuration
+            // Conversions
             // ===============================
+            var byteArrayToBase64Converter = new ValueConverter<byte[]?, string?>(
+                v => ToBase64OrNull(v),
+                v => FromBase64OrNull(v)
+            );
+
+            var byteArrayComparer = new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<byte[]?>(
+                (l, r) => ReferenceEquals(l, r) || (l != null && r != null && l.SequenceEqual(r)),
+                v => v == null ? 0 : v.Aggregate(0, (a, b) => HashCode.Combine(a, b)),
+                v => v == null ? null : v.ToArray()
+            );
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.PasswordHash)
+                .HasConversion(byteArrayToBase64Converter)
+                .Metadata.SetValueComparer(byteArrayComparer);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.PasswordHash)
+                .HasColumnType("nvarchar(max)");
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.PasswordSalt)
+                .HasConversion(byteArrayToBase64Converter)
+                .Metadata.SetValueComparer(byteArrayComparer);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.PasswordSalt)
+                .HasColumnType("nvarchar(max)");
+
             modelBuilder.Entity<Item>()
                 .Property(i => i.Price)
                 .HasPrecision(10, 2);

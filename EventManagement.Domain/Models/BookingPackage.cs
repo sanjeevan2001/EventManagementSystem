@@ -12,7 +12,7 @@ namespace EventManagement.Domain.Models
         [Key]
         public Guid PackageId { get; set; }
 
-        public Booking Booking { get; set; }
-        public Package Package { get; set; }
+        public Booking? Booking { get; set; } 
+        public Package? Package { get; set; }
     }
 }

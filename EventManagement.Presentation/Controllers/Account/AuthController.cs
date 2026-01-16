@@ -1,33 +1,59 @@
 ﻿using EventManagement.Application.Services;
+using EventManagement.Application.Interfaces.IServices;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using EventManagement.Application.DTOs.Request;
+using EventManagement.Domain.Models;
 
 namespace EventManagement.Presentation.Controllers.Account
 {
-    public class AuthController(AuthService auth) : BaseapiController
+    public class AuthController(IAuthService auth, ITokenService tokenService) : BaseapiController
     {
-        public IActionResult Index()
-        {
-            return Ok();
-        }
-        // POST api/auth/login
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+
+        [HttpPost("login")]   // POST api/auth/login
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             if (request == null) return BadRequest();
 
-            var user = auth.Login(request.Email, request.Password);
+            var user = auth.Login(request);
             if (user == null) return Unauthorized();
 
-            return Ok(user);
+            var token = tokenService.CreateToken(user);
+            return Ok(new { token });
         }
 
-
-
-        public class LoginRequest
+        [HttpPost("register")]  // POST api/auth/register
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
-            public string Email { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
+            if (request == null) return BadRequest();
+            var (Success, Error, User) = await auth.RegisterAsync(request);
+            if (!Success)
+            {
+                return BadRequest(new { error = Error });
+            }
+            var token = tokenService.CreateToken(User!);
+            return Ok(new { token });
         }
+
+
+
+
+        [HttpGet("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+
+            return Ok();
+        }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> Profile() {
+
+            return Ok();
+        }
+
+
+
+
+
     }
 }
