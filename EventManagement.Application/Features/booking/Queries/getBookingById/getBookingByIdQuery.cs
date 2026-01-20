@@ -6,5 +6,5 @@ using MediatR;
 
 namespace EventManagement.Application.Features.booking.Queries.GetBookingById
 {
-    public record getBookingByIdQuery(Guid Id) : IRequest<BookingDto?>;
+    public record getBookingByIdQuery(Guid Id, Guid ActingUserId, bool IsAdmin) : IRequest<BookingDto?>;
 }

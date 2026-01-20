@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EventManagement.Application.DTOs;
+using MediatR;
+using System;
 
 namespace EventManagement.Application.Features.assert.command.updateAssert
 {
-    public class updateAssertCommand
-    {
-    }
+    public record updateAssertCommand(
+        Guid AssetId,
+        string Name,
+        int QuantityAvailable,
+        string Description,
+        Guid PackageId
+    ) : IRequest<AssetDto>;
 }

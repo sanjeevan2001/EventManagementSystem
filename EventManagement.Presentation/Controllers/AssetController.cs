@@ -1,33 +1,55 @@
 ﻿using EventManagement.Presentation.Controllers.Account;
+using EventManagement.Application.Features.assert.Queries.GetAssets;
+using EventManagement.Application.Features.assert.Queries.GetAssertById;
+using EventManagement.Application.Features.assert.command.createAssert;
+using EventManagement.Application.Features.assert.command.updateAssert;
+using EventManagement.Application.Features.assert.command.deleteAsset;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagement.Presentation.Controllers
 {
     [Route("api")]
-    public class AssetController : BaseapiController
+    public class AssetController(IMediator _mediator) : BaseapiController
     {
+        [Authorize(Roles = "Admin")]
         [HttpPost("asset")]
-        public async Task<IActionResult> CreateAsset()   // POST /assets (Admin)
-        {
-            return Ok();
-        }
+        [HttpPost("assets")]
+        public async Task<IActionResult> CreateAsset([FromBody] createAssertCommand command)
+            => Ok(await _mediator.Send(command));
 
         [HttpGet("assets")]
-        public async Task<IActionResult> GetAssets()     // GET /assets (Admin)
+        public async Task<IActionResult> GetAssets()
+            => Ok(await _mediator.Send(new GetAssetsQuery()));
+
+        [HttpGet("assets/{id}")]
+        public async Task<IActionResult> GetAssetById(Guid id)
         {
-            return Ok();
+            var asset = await _mediator.Send(new GetAssertByIdQuery(id));
+            if (asset == null) return NotFound("Asset not found");
+            return Ok(asset);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("assets/{id}")]
-        public async Task<IActionResult> UpdateAsset(int id)  // PUT /assets/{id} (Admin)
+        public async Task<IActionResult> UpdateAsset(Guid id, [FromBody] updateAssertCommand command)
         {
-            return Ok();
+            if (command.AssetId == Guid.Empty)
+                command = command with { AssetId = id };
+
+            if (id != command.AssetId)
+                return BadRequest("Id mismatch");
+
+            return Ok(await _mediator.Send(command));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("assets/{id}")]
-        public async Task<IActionResult> DeleteAsset(int id)  // DELETE /assets/{id} (Admin)
+        public async Task<IActionResult> DeleteAsset(Guid id)
         {
-            return Ok();
+            await _mediator.Send(new deleteAssetCommand(id));
+            return NoContent();
         }
 
     }

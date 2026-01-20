@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EventManagement.Application.DTOs;
+using EventManagement.Domain.Models;
 
 namespace EventManagement.Application.Mapping
 {
@@ -9,7 +8,7 @@ namespace EventManagement.Application.Mapping
     {
         public BookingPackageProfile()
         {
-            
+            CreateMap<BookingPackage, BookingPackageDto>().ReverseMap();
         }
     }
 }

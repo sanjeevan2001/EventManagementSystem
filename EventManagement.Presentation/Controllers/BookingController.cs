@@ -6,6 +6,7 @@ using EventManagement.Application.Features.booking.Queries.GetBookings;
 using EventManagement.Application.Features.booking.Queries.GetMyBookings;
 using EventManagement.Presentation.Controllers.Account;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -21,6 +22,7 @@ namespace EventManagement.Presentation.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Roles = "Admin,Client")]
         [HttpPost("bookings")]
         public async Task<IActionResult> CreateBooking(createBookingCommand command)   // POST /bookings (Client)
         {
@@ -28,16 +30,18 @@ namespace EventManagement.Presentation.Controllers
             if (!Guid.TryParse(userIdValue, out var userId))
                 return Unauthorized();
 
-            var result = await _mediator.Send(new createBookingCommand(command.EventId, userId));
+            var result = await _mediator.Send(new createBookingCommand(command.EventId, command.AttendeesCount, userId));
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("bookings")]
         public async Task<IActionResult> GetBookings()     // GET /bookings (Admin)
         {
             return Ok(await _mediator.Send(new GetBookingsQuery()));
         }
 
+        [Authorize(Roles = "Client")]
         [HttpGet("bookings/my")]
         public async Task<IActionResult> GetMyBookings()   // GET /bookings/my (Client)
         {
@@ -48,14 +52,20 @@ namespace EventManagement.Presentation.Controllers
             return Ok(await _mediator.Send(new GetMyBookingsQuery(userId)));
         }
 
+        [Authorize(Roles = "Admin,Client")]
         [HttpGet("bookings/{id}")]
         public async Task<IActionResult> GetBookingById(Guid id)   // GET /bookings/{id} (Admin / Client)
         {
-            var booking = await _mediator.Send(new getBookingByIdQuery(id));
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _ = Guid.TryParse(userIdValue, out var userId);
+            var isAdmin = User.IsInRole("Admin");
+
+            var booking = await _mediator.Send(new getBookingByIdQuery(id, userId, isAdmin));
             if (booking == null) return NotFound("Booking not found");
             return Ok(booking);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("bookings/{id}/status")]
         public async Task<IActionResult> UpdateBookingStatus(Guid id, updateBookingCommand command)   // PUT /bookings/{id}/status (Admin)
         {
@@ -69,10 +79,15 @@ namespace EventManagement.Presentation.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Client")]
         [HttpDelete("bookings/{id}")]
         public async Task<IActionResult> CancelBooking(Guid id)   // DELETE /bookings/{id} (Client / Admin)
         {
-            await _mediator.Send(new deleteBookingCommand(id));
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _ = Guid.TryParse(userIdValue, out var userId);
+            var isAdmin = User.IsInRole("Admin");
+
+            await _mediator.Send(new deleteBookingCommand(id, userId, isAdmin));
             return NoContent();
         }
 

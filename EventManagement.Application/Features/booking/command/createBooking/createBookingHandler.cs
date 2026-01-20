@@ -4,6 +4,7 @@ using System.Text;
 using AutoMapper;
 using EventManagement.Application.Abstraction.Persistences.IRepositories;
 using EventManagement.Application.DTOs;
+using EventManagement.Application.Interfaces.IServices;
 using EventManagement.Domain.Models;
 using MediatR;
 using System.Threading;
@@ -13,27 +14,23 @@ namespace EventManagement.Application.Features.booking.command.createBooking
 {
     public class createBookingHandler : IRequestHandler<createBookingCommand, BookingDto>
     {
-        private readonly IBookingRepository _repo;
+        private readonly IBookingWorkflowService _workflow;
         private readonly IMapper _mapper;
 
-        public createBookingHandler(IBookingRepository repo, IMapper mapper)
+        public createBookingHandler(IBookingWorkflowService workflow, IMapper mapper)
         {
-            _repo = repo;
+            _workflow = workflow;
             _mapper = mapper;
         }
 
         public async Task<BookingDto> Handle(createBookingCommand request, CancellationToken cancellationToken)
         {
-            var booking = new Booking
-            {
-                BookingId = Guid.NewGuid(),
-                UserId = request.UserId,
-                EventId = request.EventId,
-                Status = "Pending",
-                BookingDate = DateTime.UtcNow
-            };
+            var booking = await _workflow.CreateBookingAsync(
+                request.EventId,
+                request.UserId,
+                request.AttendeesCount,
+                cancellationToken);
 
-            await _repo.AddAsync(booking);
             return _mapper.Map<BookingDto>(booking);
         }
     }

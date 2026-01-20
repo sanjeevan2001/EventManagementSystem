@@ -9,7 +9,11 @@ namespace EventManagement.Application.DTOs
         public Guid BookingId { get; set; }
         public Guid UserId { get; set; }
         public Guid EventId { get; set; }
+        public int AttendeesCount { get; set; }
         public string? Status { get; set; }
         public DateTime BookingDate { get; set; }
+
+        public List<BookingPackageDto> BookingPackages { get; set; } = new();
+        public List<BookingItemDto> BookingItems { get; set; } = new();
     }
 }

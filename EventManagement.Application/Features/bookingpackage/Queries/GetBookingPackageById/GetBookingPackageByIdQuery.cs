@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EventManagement.Application.DTOs;
+using MediatR;
+using System;
 
 namespace EventManagement.Application.Features.bookingpackage.Queries.GetBookingPackageById
 {
-    public class GetBookingPackageByIdQuery
-    {
-    }
+    public record GetBookingPackageByIdQuery(Guid BookingId, Guid PackageId) : IRequest<BookingPackageDto?>;
 }

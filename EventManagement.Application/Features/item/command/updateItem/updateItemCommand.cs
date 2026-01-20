@@ -11,6 +11,7 @@ namespace EventManagement.Application.Features.item.command.updateItem
         string Name,
         string Type,
         decimal Price,
-        int QuantityAvailable
+        int QuantityAvailable,
+        Guid AssetId
     ) : IRequest<ItemDto>;
 }

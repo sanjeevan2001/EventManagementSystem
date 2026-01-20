@@ -9,8 +9,8 @@ namespace EventManagement.Domain.Models
     {
         [Key]
         public Guid EventId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
@@ -18,7 +18,7 @@ namespace EventManagement.Domain.Models
         public int MaxAttendees { get; set; }
 
 
-        public Venue Venue { get; set; }
-        public ICollection<Booking> Bookings { get; set; }
+        public Venue? Venue { get; set; }
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

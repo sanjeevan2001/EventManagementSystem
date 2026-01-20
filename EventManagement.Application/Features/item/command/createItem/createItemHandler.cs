@@ -30,7 +30,8 @@ namespace EventManagement.Application.Features.item.command.createItem
                 Name = request.Name,
                 Type = request.Type,
                 Price = request.Price,
-                QuantityAvailable = request.QuantityAvailable
+                QuantityAvailable = request.QuantityAvailable,
+                AssetId = request.AssetId
             };
 
             await _repo.AddAsync(item);

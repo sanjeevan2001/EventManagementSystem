@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EventManagement.Application.DTOs;
+using MediatR;
+using System;
 
 namespace EventManagement.Application.Features.bookingpackage.command.createBookingPackage
 {
-    public class createBookingPackageCommand
-    {
-    }
+    public record createBookingPackageCommand(
+        Guid BookingId,
+        Guid PackageId
+    ) : IRequest<BookingPackageDto>;
 }

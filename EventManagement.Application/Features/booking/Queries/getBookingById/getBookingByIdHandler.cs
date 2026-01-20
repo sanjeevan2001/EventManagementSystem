@@ -24,7 +24,15 @@ namespace EventManagement.Application.Features.booking.Queries.GetBookingById
         public async Task<BookingDto?> Handle(getBookingByIdQuery request, CancellationToken cancellationToken)
         {
             var booking = await _repo.GetByIdAsync(request.Id);
-            return booking == null ? null : _mapper.Map<BookingDto>(booking);
+            if (booking == null) return null;
+
+            if (!request.IsAdmin)
+            {
+                if (request.ActingUserId == Guid.Empty) throw new UnauthorizedAccessException();
+                if (booking.UserId != request.ActingUserId) throw new UnauthorizedAccessException();
+            }
+
+            return _mapper.Map<BookingDto>(booking);
         }
     }
 }

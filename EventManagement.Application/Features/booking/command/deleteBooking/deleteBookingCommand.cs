@@ -5,5 +5,5 @@ using MediatR;
 
 namespace EventManagement.Application.Features.booking.command.deleteBooking
 {
-    public record deleteBookingCommand(Guid Id) : IRequest;
+    public record deleteBookingCommand(Guid Id, Guid ActingUserId, bool IsAdmin) : IRequest;
 }

@@ -9,6 +9,7 @@ namespace EventManagement.Application.Abstraction.Persistences.IRepositories
     public interface IAuthRepository
     {
         User? GetByEmail(string email);
+        Task<User?> GetByIdWithDetailsAsync(Guid userId);
         Task<bool> UserExistsAsync(string email);
         Task AddUserAsync(User user);
         Task AddAdminAsync(Admin admin);

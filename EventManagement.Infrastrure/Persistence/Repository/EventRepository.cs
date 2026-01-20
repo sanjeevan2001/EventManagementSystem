@@ -10,15 +10,9 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class EventRepository : IEventRepository
+    public class EventRepository(ApplicationDbContext _context) : IEventRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public EventRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+       
         public async Task<List<Event>> GetAllAsync()
             => await _context.Events.AsNoTracking().ToListAsync();
 

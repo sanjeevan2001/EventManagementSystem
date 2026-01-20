@@ -5,6 +5,7 @@ using EventManagement.Application.Mapping;
 using EventManagement.Application.Services;
 using EventManagement.Infrastrure.Data;
 using EventManagement.Infrastrure.Security;
+using EventManagement.Infrastrure.Services;
 using EventManagement.Infrastrure.Seeder;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using MediatR;
 using System.Text;
 using EventManagement.Infrastrure.Persistence.Repository;
+using EventManagement.Presentation.Middleware;
 
 
 
@@ -51,6 +53,9 @@ namespace EventManagement.Presentation
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IAssetRepository, AssetRepository>();
             builder.Services.AddScoped<IBookingPackageRepository, BookingPackageRepository>();
+            builder.Services.AddScoped<IBookingItemRepository, BookingItemRepository>();
+            builder.Services.AddScoped<IPackageItemRepository, PackageItemRepository>();
+            builder.Services.AddScoped<IBookingWorkflowService, BookingWorkflowService>();
             builder.Services.AddScoped<IAuthRepository, AuthRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
@@ -123,6 +128,7 @@ namespace EventManagement.Presentation
             }
 
             app.UseRouting();
+            app.UseMiddleware<ApiExceptionMiddleware>();
             app.UseCors("Frontend");
 
             app.UseAuthentication();

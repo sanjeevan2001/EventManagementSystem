@@ -20,6 +20,8 @@ namespace EventManagement.Infrastrure.Data
         public DbSet<Client> Clients => Set<Client>();
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<BookingPackage> BookingPackages => Set<BookingPackage>();
+        public DbSet<BookingItem> BookingItems => Set<BookingItem>();
+        public DbSet<PackageItem> PackageItems => Set<PackageItem>();
 
         private static string? ToBase64OrNull(byte[]? value)
         {
@@ -53,6 +55,12 @@ namespace EventManagement.Infrastrure.Data
 
             modelBuilder.Entity<BookingPackage>()
                 .HasKey(bp => new { bp.BookingId, bp.PackageId });
+
+            modelBuilder.Entity<BookingItem>()
+                .HasKey(bi => new { bi.BookingId, bi.ItemId });
+
+            modelBuilder.Entity<PackageItem>()
+                .HasKey(pi => new { pi.PackageId, pi.ItemId });
 
             // ===============================
             // Venue → Event (1 : M)
@@ -93,6 +101,47 @@ namespace EventManagement.Infrastrure.Data
                 .HasOne(bp => bp.Package)
                 .WithMany(p => p.BookingPackages)
                 .HasForeignKey(bp => bp.PackageId);
+
+            modelBuilder.Entity<Asset>()
+                .HasOne(a => a.Package)
+                .WithMany()
+                .HasForeignKey(a => a.PackageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ===============================
+            // Asset → Item (1 : M)
+            // ===============================
+            modelBuilder.Entity<Item>()
+                .HasOne(i => i.Asset)
+                .WithMany(a => a.Items)
+                .HasForeignKey(i => i.AssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ===============================
+            // Package ↔ Item (M : M) via PackageItem
+            // ===============================
+            modelBuilder.Entity<PackageItem>()
+                .HasOne(pi => pi.Package)
+                .WithMany(p => p.PackageItems)
+                .HasForeignKey(pi => pi.PackageId);
+
+            modelBuilder.Entity<PackageItem>()
+                .HasOne(pi => pi.Item)
+                .WithMany(i => i.PackageItems)
+                .HasForeignKey(pi => pi.ItemId);
+
+            // ===============================
+            // Booking ↔ Item (M : M) via BookingItem
+            // ===============================
+            modelBuilder.Entity<BookingItem>()
+                .HasOne(bi => bi.Booking)
+                .WithMany(b => b.BookingItems)
+                .HasForeignKey(bi => bi.BookingId);
+
+            modelBuilder.Entity<BookingItem>()
+                .HasOne(bi => bi.Item)
+                .WithMany(i => i.BookingItems)
+                .HasForeignKey(bi => bi.ItemId);
 
             // ===============================
             // User → Admin (1 : 1)
@@ -151,6 +200,10 @@ namespace EventManagement.Infrastrure.Data
             modelBuilder.Entity<User>()
                 .Property(u => u.PasswordSalt)
                 .HasColumnType("nvarchar(max)");
+
+            modelBuilder.Entity<Booking>()
+                .Property(b => b.Status)
+                .HasConversion<string>();
 
             modelBuilder.Entity<Item>()
                 .Property(i => i.Price)

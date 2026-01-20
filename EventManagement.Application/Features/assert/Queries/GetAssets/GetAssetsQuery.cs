@@ -1,10 +1,8 @@
-﻿using System;
+﻿using EventManagement.Application.DTOs;
+using MediatR;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EventManagement.Application.Features.assert.Queries.GetAssets
 {
-    public class GetAssetsQuery
-    {
-    }
+    public record GetAssetsQuery() : IRequest<List<AssetDto>>;
 }

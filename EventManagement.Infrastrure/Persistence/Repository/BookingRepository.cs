@@ -10,23 +10,26 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class BookingRepository : IBookingRepository
+    public class BookingRepository(ApplicationDbContext _context) : IBookingRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public BookingRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<List<Booking>> GetAllAsync()
-            => await _context.Bookings.AsNoTracking().ToListAsync();
+            => await _context.Bookings.AsNoTracking()
+                .Include(b => b.BookingPackages)
+                .Include(b => b.BookingItems)
+                .ToListAsync();
 
         public async Task<List<Booking>> GetByUserIdAsync(Guid userId)
-            => await _context.Bookings.AsNoTracking().Where(b => b.UserId == userId).ToListAsync();
+            => await _context.Bookings.AsNoTracking()
+                .Where(b => b.UserId == userId)
+                .Include(b => b.BookingPackages)
+                .Include(b => b.BookingItems)
+                .ToListAsync();
 
         public async Task<Booking?> GetByIdAsync(Guid id)
-            => await _context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.BookingId == id);
+            => await _context.Bookings.AsNoTracking()
+                .Include(b => b.BookingPackages)
+                .Include(b => b.BookingItems)
+                .FirstOrDefaultAsync(b => b.BookingId == id);
 
         public async Task AddAsync(Booking booking)
         {

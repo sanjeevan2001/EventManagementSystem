@@ -15,6 +15,11 @@ namespace EventManagement.Infrastrure.Persistence.Repository
         public async Task<List<BookingPackage>> GetAllAsync()
             => await _context.BookingPackages.AsNoTracking().ToListAsync();
 
+        public async Task<List<BookingPackage>> GetByBookingIdAsync(Guid bookingId)
+            => await _context.BookingPackages.AsNoTracking()
+                .Where(bp => bp.BookingId == bookingId)
+                .ToListAsync();
+
         public async Task<BookingPackage?> GetByIdAsync(Guid bookingId, Guid packageId)
             => await _context.BookingPackages.AsNoTracking()
                 .FirstOrDefaultAsync(bp => bp.BookingId == bookingId && bp.PackageId == packageId);

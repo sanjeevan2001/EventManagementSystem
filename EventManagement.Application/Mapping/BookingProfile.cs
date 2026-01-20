@@ -11,7 +11,8 @@ namespace EventManagement.Application.Mapping
     {
         public BookingProfile()
         {
-            CreateMap<Booking, BookingDto>().ReverseMap();
+            CreateMap<Booking, BookingDto>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
         }
     }
 }

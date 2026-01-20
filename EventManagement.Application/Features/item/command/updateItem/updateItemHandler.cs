@@ -30,6 +30,7 @@ namespace EventManagement.Application.Features.item.command.updateItem
             item.Type = request.Type;
             item.Price = request.Price;
             item.QuantityAvailable = request.QuantityAvailable;
+            item.AssetId = request.AssetId;
 
             await _repo.UpdateAsync(item);
             return _mapper.Map<ItemDto>(item);

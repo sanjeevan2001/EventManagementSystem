@@ -16,7 +16,7 @@ namespace EventManagement.Application.Features.venue.command.createVenue
         {
             var venue = new Venue
             {
-                venueId = Guid.NewGuid(),
+                VenueId = Guid.NewGuid(),
                 Name = request.Name,
                 Location = request.Location,
                 Capacity = request.Capacity,

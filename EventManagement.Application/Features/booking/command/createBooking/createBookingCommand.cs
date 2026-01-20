@@ -8,6 +8,7 @@ namespace EventManagement.Application.Features.booking.command.createBooking
 {
     public record createBookingCommand(
         Guid EventId,
+        int AttendeesCount = 1,
         Guid UserId = default
     ) : IRequest<BookingDto>;
 }

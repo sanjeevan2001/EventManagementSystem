@@ -9,15 +9,8 @@ using EventManagement.Application.Abstraction.Persistences.IRepositories;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class PackageRepository : IPackageRepository
+    public class PackageRepository(ApplicationDbContext _context) : IPackageRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public PackageRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<Package> CreateAsync(Package package)
         {
             _context.Packages.Add(package);

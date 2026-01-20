@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EventManagement.Application.DTOs;
+using MediatR;
+using System;
 
 namespace EventManagement.Application.Features.assert.Queries.GetAssertById
 {
-    public class GetAssertByIdQuery
-    {
-    }
+    public record GetAssertByIdQuery(Guid AssetId) : IRequest<AssetDto?>;
 }

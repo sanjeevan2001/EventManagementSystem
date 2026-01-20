@@ -8,12 +8,12 @@ namespace EventManagement.Domain.Models
     public class Venue
     {
         [Key]
-        public Guid venueId { get; set; }
+        public Guid VenueId { get; set; }
         public string Name { get; set; } = "";
         public string Location { get; set; } = "";
         public int Capacity { get; set; }
         public string? ContactInfo { get; set; }
 
-        public ICollection<Event>? Events { get; set; }
+        public ICollection<Event> Events { get; set; } = new List<Event>();
     }
 }

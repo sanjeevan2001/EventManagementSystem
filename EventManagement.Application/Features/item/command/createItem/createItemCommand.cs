@@ -10,6 +10,7 @@ namespace EventManagement.Application.Features.item.command.createItem
         string Name,
         string Type,
         decimal Price,
-        int QuantityAvailable
+        int QuantityAvailable,
+        Guid AssetId
     ) : IRequest<ItemDto>;
 }

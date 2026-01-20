@@ -20,6 +20,14 @@ namespace EventManagement.Infrastrure.Security
             return context.Users.FirstOrDefault(u => u.Email == normalizedEmail);
         }
 
+        public Task<User?> GetByIdWithDetailsAsync(Guid userId)
+        {
+            return context.Users.AsNoTracking()
+                .Include(u => u.Admin)
+                .Include(u => u.Client)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
         public Task<bool> UserExistsAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return Task.FromResult(false);

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
+using System;
 
 namespace EventManagement.Application.Features.bookingpackage.command.deleteBookingPackage
 {
-    public class deleteBookingPackageCommand
-    {
-    }
+    public record deleteBookingPackageCommand(
+        Guid BookingId,
+        Guid PackageId
+    ) : IRequest<Unit>;
 }

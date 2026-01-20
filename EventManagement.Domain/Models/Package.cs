@@ -9,11 +9,12 @@ namespace EventManagement.Domain.Models
     {
         [Key]
         public Guid PackageId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
         public decimal Price { get; set; }
 
         // Navigation
-        public ICollection<BookingPackage> BookingPackages { get; set; }
+        public ICollection<BookingPackage> BookingPackages { get; set; } = new List<BookingPackage>();
+        public ICollection<PackageItem> PackageItems { get; set; } = new List<PackageItem>();
     }
 }

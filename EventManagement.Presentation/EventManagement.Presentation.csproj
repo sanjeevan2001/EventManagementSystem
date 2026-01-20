@@ -8,6 +8,15 @@
     <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
+  <!--
+    During development, avoid writing build outputs to the same folder as a running instance
+    to reduce "file locked by" errors. Debug outputs are redirected to a separate folder.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug.Dev\</OutputPath>
+    <IntermediateOutputPath>obj\Debug.Dev\</IntermediateOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="AutoMapper" Version="11.0.0" />
