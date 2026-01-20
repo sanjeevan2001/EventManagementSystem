@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Disable creating a native AppHost to avoid file locks during build while the app is running -->
+    <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +15,7 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.OpenApi" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,5 +30,11 @@
     <ProjectReference Include="..\EventManagement.Application\EventManagement.Application.csproj" />
     <ProjectReference Include="..\EventManagement.Infrastrure\EventManagement.Infrastrure.csproj" />
   </ItemGroup>
+
+  <!-- Try to stop any process that has this project's DLL loaded before building to avoid file locks. -->
+  <Target Name="KillLockingProcesses" BeforeTargets="PrepareForBuild">
+    <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { $dll = '$(MSBuildProjectDirectory)\\bin\\Debug\\net10.0\\EventManagement.Presentation.dll'; Get-Process | ForEach-Object { try { foreach ($m in $_.Modules) { if ($m.FileName -eq $dll) { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } } catch {} } } catch {};&quot;" />
+    <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { Get-Process -Name 'EventManagement.Presentation' -ErrorAction SilentlyContinue | ForEach-Object { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } catch {};&quot;" />
+  </Target>
 
 </Project>

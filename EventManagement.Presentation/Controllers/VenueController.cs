@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagement.Presentation.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api")]
     public class VenueController(IMediator _mediator) : BaseapiController
     {
         [HttpPost("venues")]
@@ -20,11 +19,23 @@ namespace EventManagement.Presentation.Controllers
         public async Task<IActionResult> GetVenues() => Ok(await _mediator.Send(new GetAllVenuesQuery()));  //  api/venues
 
         [HttpGet("venues/{id}")]
-        public async Task<IActionResult> GetVenuesrById(Guid id) => Ok(await _mediator.Send(new getVenueByIdQuery(id)));  //  api/venues/{id}
+        public async Task<IActionResult> GetVenuesrById(Guid id)   //  api/venues/{id}
+        {
+            var venue = await _mediator.Send(new getVenueByIdQuery(id));
+
+            if (venue == null)
+                return NotFound("Venue not found");
+
+            return Ok(venue);
+        }
+
 
         [HttpPut("venues/{id}")]
         public async Task<IActionResult> UpdateVenuesById(Guid id, updateVenueCommand command)   //  api/venues/{id}
         {
+            if (command.VenueId == Guid.Empty)
+                command = command with { VenueId = id };
+
             if (id != command.VenueId) return BadRequest();
             await _mediator.Send(command);
             return NoContent();

@@ -1,44 +1,79 @@
-﻿using EventManagement.Presentation.Controllers.Account;
+﻿using EventManagement.Application.Features.booking.command.createBooking;
+using EventManagement.Application.Features.booking.command.deleteBooking;
+using EventManagement.Application.Features.booking.command.updateBooking;
+using EventManagement.Application.Features.booking.Queries.GetBookingById;
+using EventManagement.Application.Features.booking.Queries.GetBookings;
+using EventManagement.Application.Features.booking.Queries.GetMyBookings;
+using EventManagement.Presentation.Controllers.Account;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EventManagement.Presentation.Controllers
 {
+    [Route("api")]
     public class BookingController : BaseapiController
     {
-        [HttpPost("bookings")]
-        public async Task<IActionResult> CreateBooking()   // POST /bookings (Client)
+        private readonly IMediator _mediator;
+
+        public BookingController(IMediator mediator)
         {
-            return Ok();
+            _mediator = mediator;
+        }
+
+        [HttpPost("bookings")]
+        public async Task<IActionResult> CreateBooking(createBookingCommand command)   // POST /bookings (Client)
+        {
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdValue, out var userId))
+                return Unauthorized();
+
+            var result = await _mediator.Send(new createBookingCommand(command.EventId, userId));
+            return Ok(result);
         }
 
         [HttpGet("bookings")]
         public async Task<IActionResult> GetBookings()     // GET /bookings (Admin)
         {
-            return Ok();
+            return Ok(await _mediator.Send(new GetBookingsQuery()));
         }
 
         [HttpGet("bookings/my")]
         public async Task<IActionResult> GetMyBookings()   // GET /bookings/my (Client)
         {
-            return Ok();
+            var userIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdValue, out var userId))
+                return Unauthorized();
+
+            return Ok(await _mediator.Send(new GetMyBookingsQuery(userId)));
         }
 
         [HttpGet("bookings/{id}")]
-        public async Task<IActionResult> GetBookingById(int id)   // GET /bookings/{id} (Admin / Client)
+        public async Task<IActionResult> GetBookingById(Guid id)   // GET /bookings/{id} (Admin / Client)
         {
-            return Ok();
+            var booking = await _mediator.Send(new getBookingByIdQuery(id));
+            if (booking == null) return NotFound("Booking not found");
+            return Ok(booking);
         }
 
         [HttpPut("bookings/{id}/status")]
-        public async Task<IActionResult> UpdateBookingStatus(int id)   // PUT /bookings/{id}/status (Admin)
+        public async Task<IActionResult> UpdateBookingStatus(Guid id, updateBookingCommand command)   // PUT /bookings/{id}/status (Admin)
         {
-            return Ok();
+            if (command.BookingId == Guid.Empty)
+                command = command with { BookingId = id };
+
+            if (id != command.BookingId)
+                return BadRequest("Id mismatch");
+
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpDelete("bookings/{id}")]
-        public async Task<IActionResult> CancelBooking(int id)   // DELETE /bookings/{id} (Client / Admin)
+        public async Task<IActionResult> CancelBooking(Guid id)   // DELETE /bookings/{id} (Client / Admin)
         {
-            return Ok();
+            await _mediator.Send(new deleteBookingCommand(id));
+            return NoContent();
         }
 
     }

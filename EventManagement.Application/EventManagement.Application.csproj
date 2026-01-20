@@ -20,12 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\assert\DTOs\" />
     <Folder Include="Features\bookingpackage\DTOs\" />
-    <Folder Include="Features\booking\DTOs\" />
     <Folder Include="Features\events\DTOs\" />
     <Folder Include="Features\item\DTOs\" />
-    <Folder Include="Features\package\DTOs\" />
   </ItemGroup>
 
 </Project>

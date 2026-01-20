@@ -1,38 +1,51 @@
-﻿using EventManagement.Presentation.Controllers.Account;
+﻿using EventManagement.Application.Features.package.command.createPackage;
+using EventManagement.Application.Features.package.command.deletePackage;
+using EventManagement.Application.Features.package.command.updatePackage;
+using EventManagement.Application.Features.package.Queries.getPackageById;
+using EventManagement.Application.Features.package.Queries.GetPackages;
+using EventManagement.Presentation.Controllers.Account;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EventManagement.Presentation.Controllers
 {
+    [Route("api")]
     public class PackageController : BaseapiController
     {
-        [HttpPost("packages")]
-        public async Task<IActionResult> CreatePackage()   // POST /packages (Admin)
+        private readonly IMediator _mediator;
+
+        public PackageController(IMediator mediator)
         {
-            return Ok();
+            _mediator = mediator;
         }
+        [HttpPost("packages")]
+        public async Task<IActionResult> CreatePackage(createPackageCommand command) => Ok(await _mediator.Send(command));  // POST /packages (Admin)
+
 
         [HttpGet("packages")]
-        public async Task<IActionResult> GetPackages()     // GET /packages (Public)
-        {
-            return Ok();
-        }
+        public async Task<IActionResult> GetPackages() => Ok(await _mediator.Send(new GetPackagesQuery()));   // GET /packages (Public)
+
 
         [HttpGet("packages/{id}")]
-        public async Task<IActionResult> GetPackageById(int id) // GET /packages/{id} (Public)
-        {
-            return Ok();
-        }
+        public async Task<IActionResult> GetPackageById(Guid id) => Ok(await _mediator.Send(new getPackageByIdQuery(id))); // GET /packages/{id} (Public)
+
 
         [HttpPut("packages/{id}")]
-        public async Task<IActionResult> UpdatePackage(int id)  // PUT /packages/{id} (Admin)
+        public async Task<IActionResult> UpdatePackage(Guid id, updatePackageCommand command)  // PUT /packages/{id} (Admin)
         {
-            return Ok();
+            if (id != command.Id)
+                return BadRequest("Id mismatch");
+
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpDelete("packages/{id}")]
-        public async Task<IActionResult> DeletePackage(int id)  // DELETE /packages/{id} (Admin)
+        public async Task<IActionResult> DeletePackage(Guid id)  // DELETE /packages/{id} (Admin)
         {
-            return Ok();
+            await _mediator.Send(new deletePackageCommand(id));
+            return NoContent();
         }
 
     }

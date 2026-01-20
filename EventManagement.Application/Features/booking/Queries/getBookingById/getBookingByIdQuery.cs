@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using EventManagement.Application.DTOs;
+using MediatR;
 
 namespace EventManagement.Application.Features.booking.Queries.GetBookingById
 {
-    public class getBookingByIdQuery
-    {
-    }
+    public record getBookingByIdQuery(Guid Id) : IRequest<BookingDto?>;
 }

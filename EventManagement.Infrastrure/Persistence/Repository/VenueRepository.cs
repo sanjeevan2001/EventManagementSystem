@@ -14,7 +14,8 @@ namespace EventManagement.Infrastrure.Persistence.Repository
             => await _context.Venues.ToListAsync();
 
         public async Task<Venue?> GetByIdAsync(Guid id)
-            => await _context.Venues.FindAsync(id);
+            => await _context.Venues.AsNoTracking()
+        .FirstOrDefaultAsync(v => v.venueId == id);
 
         public async Task AddAsync(Venue venue)
         {

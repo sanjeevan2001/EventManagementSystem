@@ -7,6 +7,7 @@ using EventManagement.Domain.Models;
 
 namespace EventManagement.Presentation.Controllers.Account
 {
+    [Route("api/auth")]
     public class AuthController(IAuthService auth, ITokenService tokenService) : BaseapiController
     {
 

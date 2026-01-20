@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MediatR;
 
 namespace EventManagement.Application.Features.booking.command.deleteBooking
 {
-    public class deleteBookingCommand
-    {
-    }
+    public record deleteBookingCommand(Guid Id) : IRequest;
 }

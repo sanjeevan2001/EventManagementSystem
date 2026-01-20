@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagement.Presentation.Controllers
 {
+    [Route("api")]
     public class AssetController : BaseapiController
     {
         [HttpPost("asset")]

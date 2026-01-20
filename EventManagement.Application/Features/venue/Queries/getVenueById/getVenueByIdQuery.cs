@@ -6,6 +6,6 @@ using System.Text;
 
 namespace EventManagement.Application.Features.venue.Queries.getVenueById
 {
-    public class getVenueByIdQuery(Guid Id) : IRequest<VenueDto?>;
+    public record getVenueByIdQuery(Guid VenueId) : IRequest<VenueDto?>;
    
 }
