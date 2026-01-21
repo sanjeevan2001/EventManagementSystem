@@ -11,7 +11,8 @@ namespace EventManagement.Application.DTOs
         public string Description { get; set; } = null!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public Guid VenueId { get; set; }
+       
         public int MaxAttendees { get; set; }
+        public List<VenueDto> Venues { get; set; } = new List<VenueDto>();
     }
 }

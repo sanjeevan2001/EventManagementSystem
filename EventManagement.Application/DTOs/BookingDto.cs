@@ -13,6 +13,11 @@ namespace EventManagement.Application.DTOs
         public string? Status { get; set; }
         public DateTime BookingDate { get; set; }
 
+        // Enriched fields for display
+        public string? EventName { get; set; }
+        public DateTime? EventStartDate { get; set; }
+        public DateTime? EventEndDate { get; set; }
+
         public List<BookingPackageDto> BookingPackages { get; set; } = new();
         public List<BookingItemDto> BookingItems { get; set; } = new();
     }

@@ -5,12 +5,10 @@ using System.Text;
 
 namespace EventManagement.Application.Abstraction.Persistences.IRepositories
 {
-    public interface IVenueRepository 
+    public interface IVenueRepository : IGenericRepository<Venue>
     {
-        Task<List<Venue>> GetAllAsync();
-        Task<Venue?> GetByIdAsync(Guid id);
-        Task AddAsync(Venue venue);
-        Task UpdateAsync(Venue venue);
-        Task DeleteAsync(Venue venue);
+        // All basic CRUD operations are inherited from IGenericRepository<Venue>
+        // Override to return List instead of IEnumerable
+        new Task<List<Venue>> GetAllAsync();
     }
 }

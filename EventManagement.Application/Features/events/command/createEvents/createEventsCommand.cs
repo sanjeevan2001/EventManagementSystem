@@ -11,7 +11,7 @@ namespace EventManagement.Application.Features.events.command.createEvents
         string Description,
         DateTime StartDate,
         DateTime EndDate,
-        Guid VenueId,
+        List<Guid> VenueIds,
         int MaxAttendees
     ) : IRequest<EventDto>;
 }

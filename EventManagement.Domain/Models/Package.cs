@@ -16,5 +16,6 @@ namespace EventManagement.Domain.Models
         // Navigation
         public ICollection<BookingPackage> BookingPackages { get; set; } = new List<BookingPackage>();
         public ICollection<PackageItem> PackageItems { get; set; } = new List<PackageItem>();
+        public ICollection<Asset> Assets { get; set; } = new List<Asset>();
     }
 }

@@ -10,30 +10,39 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class AssetRepository(ApplicationDbContext _context) : IAssetRepository
+    public class AssetRepository : GenericRepository<Asset>, IAssetRepository
     {
-        public async Task<List<Asset>> GetAllAsync()
-            => await _context.Assets.AsNoTracking().ToListAsync();
-
-        public async Task<Asset?> GetByIdAsync(Guid id)
-            => await _context.Assets.AsNoTracking().FirstOrDefaultAsync(a => a.AssetId == id);
-
-        public async Task AddAsync(Asset asset)
+        public AssetRepository(ApplicationDbContext context) : base(context)
         {
-            _context.Assets.Add(asset);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Asset asset)
+        // Override GetAllAsync to return List<Asset>
+        public new async Task<List<Asset>> GetAllAsync()
+            => await _dbSet.AsNoTracking().ToListAsync();
+
+        // Override GetByIdAsync to use AsNoTracking
+        public override async Task<Asset?> GetByIdAsync(Guid id)
+            => await _dbSet.AsNoTracking().FirstOrDefaultAsync(a => a.AssetId == id);
+
+        // Override AddAsync to include SaveChanges
+        public override async Task AddAsync(Asset asset)
         {
-            _context.Assets.Update(asset);
-            await _context.SaveChangesAsync();
+            await base.AddAsync(asset);
+            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Asset asset)
+        // Override UpdateAsync to include SaveChanges
+        public override async Task UpdateAsync(Asset asset)
         {
-            _context.Assets.Remove(asset);
-            await _context.SaveChangesAsync();
+            await base.UpdateAsync(asset);
+            await SaveChangesAsync();
+        }
+
+        // Override DeleteAsync to include SaveChanges
+        public override async Task DeleteAsync(Asset asset)
+        {
+            await base.DeleteAsync(asset);
+            await SaveChangesAsync();
         }
     }
 }

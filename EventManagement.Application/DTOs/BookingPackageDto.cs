@@ -8,5 +8,7 @@ namespace EventManagement.Application.DTOs
     {
         public Guid BookingId { get; set; }
         public Guid PackageId { get; set; }
+        public string PackageName { get; set; } = string.Empty;
+        public List<AssetDto> Assets { get; set; } = new();
     }
 }

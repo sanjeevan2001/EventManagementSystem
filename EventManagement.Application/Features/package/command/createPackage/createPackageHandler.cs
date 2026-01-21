@@ -31,7 +31,7 @@ namespace EventManagement.Application.Features.package.command.createPackage
                 Price = request.Price
             };
 
-            await _repo.CreateAsync(package);
+            await _repo.AddAsync(package);
             return _mapper.Map<PackageDto>(package);
         }
 

@@ -15,6 +15,7 @@ using MediatR;
 using System.Text;
 using EventManagement.Infrastrure.Persistence.Repository;
 using EventManagement.Presentation.Middleware;
+using EventManagement.Application.Behaviors;
 
 
 
@@ -62,6 +63,12 @@ namespace EventManagement.Presentation
 
             // Register MediatR handlers (v11 API)
             builder.Services.AddMediatR(typeof(createVenueCommand).Assembly);
+
+            // Register Validators
+            builder.Services.AddValidatorsFromAssembly(typeof(createVenueCommand).Assembly);
+            
+            // Register Pipeline Behaviors
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

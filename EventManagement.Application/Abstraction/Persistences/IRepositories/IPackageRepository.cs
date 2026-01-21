@@ -5,12 +5,9 @@ using System.Text;
 
 namespace EventManagement.Application.Abstraction.Persistences.IRepositories
 {
-    public interface IPackageRepository
+    public interface IPackageRepository : IGenericRepository<Package>
     {
-        Task<Package> CreateAsync(Package package);
-        Task<List<Package>> GetAllAsync();
-        Task<Package?> GetByIdAsync(Guid id);
-        Task UpdateAsync(Package package);
-        Task DeleteAsync(Package package);
+        // Override to return List instead of IEnumerable
+        new Task<List<Package>> GetAllAsync();
     }
 }

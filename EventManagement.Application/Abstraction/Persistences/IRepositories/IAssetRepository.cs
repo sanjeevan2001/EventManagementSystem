@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Application.Abstraction.Persistences.IRepositories
 {
-    public interface IAssetRepository
+    public interface IAssetRepository : IGenericRepository<Asset>
     {
-        Task<List<Asset>> GetAllAsync();
-        Task<Asset?> GetByIdAsync(Guid id);
-        Task AddAsync(Asset asset);
-        Task UpdateAsync(Asset asset);
-        Task DeleteAsync(Asset asset);
+        // Override to return List instead of IEnumerable
+        new Task<List<Asset>> GetAllAsync();
     }
 }

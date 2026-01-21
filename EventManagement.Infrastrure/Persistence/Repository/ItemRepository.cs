@@ -9,30 +9,47 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class ItemRepository(ApplicationDbContext _context) : IItemRepository
-    {     
-        public async Task<List<Item>> GetAllAsync()
-            => await _context.Items.AsNoTracking().ToListAsync();
-
-        public async Task<Item?> GetByIdAsync(Guid id)
-            => await _context.Items.AsNoTracking().FirstOrDefaultAsync(i => i.ItemId == id);
-
-        public async Task AddAsync(Item item)
+    public class ItemRepository : GenericRepository<Item>, IItemRepository
+    {
+        public ItemRepository(ApplicationDbContext context) : base(context)
         {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Item item)
+        // Override GetAllAsync to return List<Item> and include navigation properties
+        public new async Task<List<Item>> GetAllAsync()
+            => await _dbSet
+                .AsNoTracking()
+                .Include(i => i.Asset)
+                .ThenInclude(a => a!.Package!)
+                .ToListAsync();
+
+        // Override GetByIdAsync to include navigation properties
+        public override async Task<Item?> GetByIdAsync(Guid id)
+            => await _dbSet
+                .AsNoTracking()
+                .Include(i => i.Asset)
+                .ThenInclude(a => a!.Package!)
+                .FirstOrDefaultAsync(i => i.ItemId == id);
+
+        // Override AddAsync to include SaveChanges
+        public override async Task AddAsync(Item item)
         {
-            _context.Items.Update(item);
-            await _context.SaveChangesAsync();
+            await base.AddAsync(item);
+            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Item item)
+        // Override UpdateAsync to include SaveChanges
+        public override async Task UpdateAsync(Item item)
         {
-            _context.Items.Remove(item);
-            await _context.SaveChangesAsync();
+            await base.UpdateAsync(item);
+            await SaveChangesAsync();
+        }
+
+        // Override DeleteAsync to include SaveChanges
+        public override async Task DeleteAsync(Item item)
+        {
+            await base.DeleteAsync(item);
+            await SaveChangesAsync();
         }
     }
 }

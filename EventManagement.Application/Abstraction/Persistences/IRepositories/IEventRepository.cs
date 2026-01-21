@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Application.Abstraction.Persistences.IRepositories
 {
-    public interface IEventRepository
+    public interface IEventRepository : IGenericRepository<Event>
     {
-        Task<List<Event>> GetAllAsync();
-        Task<Event?> GetByIdAsync(Guid id);
+        // Override to return List instead of IEnumerable
+        new Task<List<Event>> GetAllAsync();
+        
+        // Custom method specific to Event
         Task<List<Event>> GetByVenueIdAsync(Guid venueId);
-        Task AddAsync(Event ev);
-        Task UpdateAsync(Event ev);
-        Task DeleteAsync(Event ev);
     }
 }

@@ -11,5 +11,8 @@ namespace EventManagement.Application.DTOs
         public string Location { get; set; } = null!;
         public int Capacity { get; set; }
         public string ContactInfo { get; set; } = null!;
+        
+        // Add events list for navigation
+        public List<EventDto>? Events { get; set; }
     }
 }

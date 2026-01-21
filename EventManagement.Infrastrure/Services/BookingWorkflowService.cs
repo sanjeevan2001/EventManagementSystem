@@ -27,13 +27,14 @@ namespace EventManagement.Infrastrure.Services
 
             var ev = await _context.Events
                 .AsNoTracking()
-                .Include(e => e.Venue)
+                .Include(e => e.Venues)
                 .FirstOrDefaultAsync(e => e.EventId == eventId, cancellationToken);
 
             if (ev == null) throw new KeyNotFoundException("Event not found");
-            if (ev.Venue == null) throw new KeyNotFoundException("Venue not found for the event");
+            if (ev.Venues == null || !ev.Venues.Any()) throw new KeyNotFoundException("Venue not found for the event");
 
-            var capacityLimit = Math.Min(ev.MaxAttendees, ev.Venue.Capacity);
+            var totalVenueCapacity = ev.Venues.Sum(v => v.Capacity);
+            var capacityLimit = Math.Min(ev.MaxAttendees, totalVenueCapacity);
 
             var existingAttendees = await _context.Bookings
                 .AsNoTracking()
@@ -102,13 +103,14 @@ namespace EventManagement.Infrastrure.Services
         {
             var ev = await _context.Events
                 .AsNoTracking()
-                .Include(e => e.Venue)
+                .Include(e => e.Venues)
                 .FirstOrDefaultAsync(e => e.EventId == booking.EventId, cancellationToken);
 
             if (ev == null) throw new KeyNotFoundException("Event not found");
-            if (ev.Venue == null) throw new KeyNotFoundException("Venue not found for the event");
+            if (ev.Venues == null || !ev.Venues.Any()) throw new KeyNotFoundException("Venue not found for the event");
 
-            var capacityLimit = Math.Min(ev.MaxAttendees, ev.Venue.Capacity);
+            var totalVenueCapacity = ev.Venues.Sum(v => v.Capacity);
+            var capacityLimit = Math.Min(ev.MaxAttendees, totalVenueCapacity);
 
             var otherAttendees = await _context.Bookings
                 .AsNoTracking()

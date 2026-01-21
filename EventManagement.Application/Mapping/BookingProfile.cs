@@ -12,7 +12,10 @@ namespace EventManagement.Application.Mapping
         public BookingProfile()
         {
             CreateMap<Booking, BookingDto>()
-                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
+                .ForMember(d => d.EventName, opt => opt.MapFrom(s => s.Event != null ? s.Event.Name : null))
+                .ForMember(d => d.EventStartDate, opt => opt.MapFrom(s => s.Event != null ? (DateTime?)s.Event.StartDate : null))
+                .ForMember(d => d.EventEndDate, opt => opt.MapFrom(s => s.Event != null ? (DateTime?)s.Event.EndDate : null));
         }
     }
 }

@@ -63,13 +63,12 @@ namespace EventManagement.Infrastrure.Data
                 .HasKey(pi => new { pi.PackageId, pi.ItemId });
 
             // ===============================
-            // Venue → Event (1 : M)
+            // Event ↔ Venue (M : M)
             // ===============================
             modelBuilder.Entity<Event>()
-                .HasOne(e => e.Venue)
+                .HasMany(e => e.Venues)
                 .WithMany(v => v.Events)
-                .HasForeignKey(e => e.VenueId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .UsingEntity(j => j.ToTable("EventVenues"));
 
             // ===============================
             // Event → Booking (1 : M)

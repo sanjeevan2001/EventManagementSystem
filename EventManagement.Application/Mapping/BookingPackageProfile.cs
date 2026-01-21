@@ -8,7 +8,10 @@ namespace EventManagement.Application.Mapping
     {
         public BookingPackageProfile()
         {
-            CreateMap<BookingPackage, BookingPackageDto>().ReverseMap();
+            CreateMap<BookingPackage, BookingPackageDto>()
+                .ForMember(d => d.PackageName, o => o.MapFrom(s => s.Package != null ? s.Package.Name : string.Empty))
+                .ForMember(d => d.Assets, o => o.MapFrom(s => s.Package != null ? s.Package.Assets : new List<Asset>()))
+                .ReverseMap();
         }
     }
 }

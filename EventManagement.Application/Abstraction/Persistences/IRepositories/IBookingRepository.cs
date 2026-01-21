@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Application.Abstraction.Persistences.IRepositories
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IGenericRepository<Booking>
     {
-        Task<List<Booking>> GetAllAsync();
+        // Override to return List instead of IEnumerable
+        new Task<List<Booking>> GetAllAsync();
+
         Task<List<Booking>> GetByUserIdAsync(Guid userId);
-        Task<Booking?> GetByIdAsync(Guid id);
-        Task AddAsync(Booking booking);
-        Task UpdateAsync(Booking booking);
-        Task DeleteAsync(Booking booking);
+        Task<List<Booking>> GetByEventIdAsync(Guid eventId);
     }
 }

@@ -1,0 +1,207 @@
+{
+    "venues": [
+        {
+            "name": "Shangri-La Colombo - Grand Ballroom",
+            "location": "Colombo 02",
+            "capacity": 1500,
+            "contactInfo": "events.slcb@shangri-la.com"
+        },
+        {
+            "name": "BMICH - Main Hall",
+            "location": "Colombo 07",
+            "capacity": 2000,
+            "contactInfo": "inquiries@bmich.com"
+        },
+        {
+            "name": "Jetwing Lighthouse - The Lawn",
+            "location": "Galle",
+            "capacity": 300,
+            "contactInfo": "lighthouse@jetwing.lk"
+        },
+        {
+            "name": "Earl's Regency - Kandy View Terrace",
+            "location": "Kandy",
+            "capacity": 400,
+            "contactInfo": "regency@earls.lk"
+        },
+        {
+            "name": "Water's Edge - The Grand Lawn",
+            "location": "Battaramulla",
+            "capacity": 1000,
+            "contactInfo": "events@watersedge.lk"
+        }
+    ],
+    "packages": [
+        {
+            "name": "Platinum Wedding Package",
+            "description": "Premium full-service wedding setup with gold theme.",
+            "price": 450000.00,
+            "assets": [
+                {
+                    "name": "Gold Tiffany Chairs",
+                    "description": "Elegant gold-finish resin chairs.",
+                    "quantityAvailable": 500,
+                    "items": [
+                        {
+                            "name": "Chair Frame - Gold",
+                            "type": "Furniture",
+                            "price": 2500.00,
+                            "quantityAvailable": 500
+                        },
+                        {
+                            "name": "White Cushion",
+                            "type": "Accessory",
+                            "price": 500.00,
+                            "quantityAvailable": 550
+                        }
+                    ]
+                },
+                {
+                    "name": "Crystal Chandelier Centerpieces",
+                    "description": "Tall table centerpieces with crystals.",
+                    "quantityAvailable": 50,
+                    "items": [
+                        {
+                            "name": "Crystal Strands",
+                            "type": "Decoration",
+                            "price": 1000.00,
+                            "quantityAvailable": 200
+                        },
+                        {
+                            "name": "Metal Base - Silver",
+                            "type": "Part",
+                            "price": 1500.00,
+                            "quantityAvailable": 50
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Corporate Conference Basic",
+            "description": "Standard setup for business meetings and seminars.",
+            "price": 120000.00,
+            "assets": [
+                {
+                    "name": "Conference Tables (Rectangle)",
+                    "description": "Standard 6ft tables with skirting.",
+                    "quantityAvailable": 100,
+                    "items": [
+                        {
+                            "name": "Table Top 6ft",
+                            "type": "Furniture",
+                            "price": 3000.00,
+                            "quantityAvailable": 100
+                        },
+                        {
+                            "name": "Black Skirting Cloth",
+                            "type": "Fabric",
+                            "price": 1200.00,
+                            "quantityAvailable": 120
+                        }
+                    ]
+                },
+                {
+                    "name": "Projector & Screen Set",
+                    "description": "High-lumen projector with portable screen.",
+                    "quantityAvailable": 10,
+                    "items": [
+                        {
+                            "name": "BenQ Projector 4K",
+                            "type": "Electronics",
+                            "price": 150000.00,
+                            "quantityAvailable": 10
+                        },
+                        {
+                            "name": "Tripod Screen 8x8",
+                            "type": "Electronics",
+                            "price": 25000.00,
+                            "quantityAvailable": 10
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Outdoor Garden Party",
+            "description": "Relaxed outdoor setup with lighting and casual seating.",
+            "price": 180000.00,
+            "assets": [
+                {
+                    "name": "Bean Bags - Colorful",
+                    "description": "Assorted color bean bags.",
+                    "quantityAvailable": 60,
+                    "items": [
+                        {
+                            "name": "Bean Bag Cover",
+                            "type": "Fabric",
+                            "price": 1500.00,
+                            "quantityAvailable": 60
+                        },
+                        {
+                            "name": "Beans Filling (kg)",
+                            "type": "Consumable",
+                            "price": 500.00,
+                            "quantityAvailable": 300
+                        }
+                    ]
+                },
+                {
+                    "name": "Fairy Light Strings (100m)",
+                    "description": "Warm white LED strings.",
+                    "quantityAvailable": 20,
+                    "items": [
+                        {
+                            "name": "LED String 100m",
+                            "type": "Lighting",
+                            "price": 3500.00,
+                            "quantityAvailable": 30
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "SLASSCOM Tech Forum 2026",
+            "description": "Annual technology leadership summit.",
+            "venueNames": [
+                "Shangri-La Colombo - Grand Ballroom"
+            ],
+            "daysFromNow": 15,
+            "durationHours": 8,
+            "maxAttendees": 800
+        },
+        {
+            "name": "National Wedding Expo",
+            "description": "Biggest wedding exhibition in Sri Lanka.",
+            "venueNames": [
+                "BMICH - Main Hall"
+            ],
+            "daysFromNow": 45,
+            "durationHours": 48,
+            "maxAttendees": 5000
+        },
+        {
+            "name": "Sanjeevan & Thilini Wedding",
+            "description": "Private wedding reception.",
+            "venueNames": [
+                "Jetwing Lighthouse - The Lawn"
+            ],
+            "daysFromNow": -5,
+            "durationHours": 6,
+            "maxAttendees": 250
+        },
+        {
+            "name": "Kandy Esala Perahera Viewing",
+            "description": "Exclusive viewing gallery for tourists.",
+            "venueNames": [
+                "Earl's Regency - Kandy View Terrace"
+            ],
+            "daysFromNow": 60,
+            "durationHours": 4,
+            "maxAttendees": 100
+        }
+    ]
+}

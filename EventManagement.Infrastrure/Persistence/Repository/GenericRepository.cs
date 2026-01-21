@@ -19,7 +19,12 @@ namespace EventManagement.Infrastrure.Persistence.Repository
             _dbSet = context.Set<T>();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
+
+        public virtual async Task<T?> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -34,34 +39,38 @@ namespace EventManagement.Infrastrure.Persistence.Repository
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
-        public async Task AddAsync(T entity)
+        public virtual async Task<bool> ExistsAsync(int id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            return entity != null;
+        }
+
+        public virtual async Task<bool> ExistsAsync(Guid id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            return entity != null;
+        }
+
+        public virtual async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
         }
 
-        public void Update_Async(T entity)
+        public virtual Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
+            return Task.CompletedTask;
         }
 
-        public void DeleteAsync(T entity)
+        public virtual Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
+            return Task.CompletedTask;
         }
 
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
-        }
-
-        Task IGenericRepository<T>.UpdateAsync(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IGenericRepository<T>.DeleteAsync(T entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -8,31 +8,40 @@ using System.Text;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class VenueRepository(ApplicationDbContext _context) : IVenueRepository
+    public class VenueRepository : GenericRepository<Venue>, IVenueRepository
     {
-        public async Task<List<Venue>> GetAllAsync()
-            => await _context.Venues.ToListAsync();
-
-        public async Task<Venue?> GetByIdAsync(Guid id)
-            => await _context.Venues.AsNoTracking()
-        .FirstOrDefaultAsync(v => v.VenueId == id);
-
-        public async Task AddAsync(Venue venue)
+        public VenueRepository(ApplicationDbContext context) : base(context)
         {
-            _context.Venues.Add(venue);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Venue venue)
+        // Override GetAllAsync to return List<Venue> instead of IEnumerable<Venue>
+        public new async Task<List<Venue>> GetAllAsync()
+            => await _dbSet.ToListAsync();
+
+        // Override GetByIdAsync to use AsNoTracking for read operations
+        public override async Task<Venue?> GetByIdAsync(Guid id)
+            => await _dbSet.AsNoTracking()
+                .FirstOrDefaultAsync(v => v.VenueId == id);
+
+        // Override AddAsync to include SaveChanges
+        public override async Task AddAsync(Venue venue)
         {
-            _context.Venues.Update(venue);
-            await _context.SaveChangesAsync();
+            await base.AddAsync(venue);
+            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Venue venue)
+        // Override UpdateAsync to include SaveChanges
+        public override async Task UpdateAsync(Venue venue)
         {
-            _context.Venues.Remove(venue);
-            await _context.SaveChangesAsync();
+            await base.UpdateAsync(venue);
+            await SaveChangesAsync();
+        }
+
+        // Override DeleteAsync to include SaveChanges
+        public override async Task DeleteAsync(Venue venue)
+        {
+            await base.DeleteAsync(venue);
+            await SaveChangesAsync();
         }
     }
 }

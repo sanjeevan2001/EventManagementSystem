@@ -11,7 +11,9 @@ namespace EventManagement.Application.Mapping
     {
         public EventProfile()
         {
-            CreateMap<Event, EventDto>().ReverseMap();
+            CreateMap<Event, EventDto>()
+                .ForMember(d => d.Venues, o => o.MapFrom(s => s.Venues))
+                .ReverseMap();
         }
     }
 }

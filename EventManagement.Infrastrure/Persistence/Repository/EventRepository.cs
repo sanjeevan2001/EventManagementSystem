@@ -10,34 +10,53 @@ using System.Threading.Tasks;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class EventRepository(ApplicationDbContext _context) : IEventRepository
+    public class EventRepository : GenericRepository<Event>, IEventRepository
     {
-       
-        public async Task<List<Event>> GetAllAsync()
-            => await _context.Events.AsNoTracking().ToListAsync();
+        public EventRepository(ApplicationDbContext context) : base(context)
+        {
+        }
 
-        public async Task<Event?> GetByIdAsync(Guid id)
-            => await _context.Events.AsNoTracking().FirstOrDefaultAsync(e => e.EventId == id);
+        // Override GetAllAsync to return List<Event> and include navigation properties
+        public new async Task<List<Event>> GetAllAsync()
+            => await _dbSet
+                .AsNoTracking()
+                .Include(e => e.Venues)
+                .ToListAsync();
 
+        // Override GetByIdAsync to include navigation properties
+        public override async Task<Event?> GetByIdAsync(Guid id)
+            => await _dbSet
+                .AsNoTracking()
+                .Include(e => e.Venues)
+                .FirstOrDefaultAsync(e => e.EventId == id);
+
+        // Custom method to get events by venue
         public async Task<List<Event>> GetByVenueIdAsync(Guid venueId)
-            => await _context.Events.AsNoTracking().Where(e => e.VenueId == venueId).ToListAsync();
+            => await _dbSet
+                .AsNoTracking()
+                .Include(e => e.Venues)
+                .Where(e => e.Venues.Any(v => v.VenueId == venueId))
+                .ToListAsync();
 
-        public async Task AddAsync(Event ev)
+        // Override AddAsync to include SaveChanges
+        public override async Task AddAsync(Event ev)
         {
-            _context.Events.Add(ev);
-            await _context.SaveChangesAsync();
+            await base.AddAsync(ev);
+            await SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Event ev)
+        // Override UpdateAsync to include SaveChanges
+        public override async Task UpdateAsync(Event ev)
         {
-            _context.Events.Update(ev);
-            await _context.SaveChangesAsync();
+            await base.UpdateAsync(ev);
+            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Event ev)
+        // Override DeleteAsync to include SaveChanges
+        public override async Task DeleteAsync(Event ev)
         {
-            _context.Events.Remove(ev);
-            await _context.SaveChangesAsync();
+            await base.DeleteAsync(ev);
+            await SaveChangesAsync();
         }
     }
 }

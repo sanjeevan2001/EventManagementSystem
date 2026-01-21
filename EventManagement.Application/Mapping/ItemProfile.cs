@@ -11,7 +11,10 @@ namespace EventManagement.Application.Mapping
     {
         public ItemProfile()
         {
-            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<Item, ItemDto>()
+                .ForMember(d => d.AssetName, o => o.MapFrom(s => s.Asset != null ? s.Asset.Name : string.Empty))
+                .ForMember(d => d.PackageName, o => o.MapFrom(s => s.Asset != null && s.Asset.Package != null ? s.Asset.Package.Name : string.Empty))
+                .ReverseMap();
         }
     }
 }

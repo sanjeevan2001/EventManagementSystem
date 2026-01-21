@@ -9,31 +9,31 @@ using EventManagement.Application.Abstraction.Persistences.IRepositories;
 
 namespace EventManagement.Infrastrure.Persistence.Repository
 {
-    public class PackageRepository(ApplicationDbContext _context) : IPackageRepository
+    public class PackageRepository : GenericRepository<Package>, IPackageRepository
     {
-        public async Task<Package> CreateAsync(Package package)
+        public PackageRepository(ApplicationDbContext context) : base(context)
         {
-            _context.Packages.Add(package);
-            await _context.SaveChangesAsync();
-            return package;
         }
 
-        public async Task<List<Package>> GetAllAsync()
-            => await _context.Packages.ToListAsync();
+        public new async Task<List<Package>> GetAllAsync()
+            => await _dbSet.ToListAsync();
 
-        public async Task<Package?> GetByIdAsync(Guid id)
-            => await _context.Packages.FindAsync(id);
-
-        public async Task UpdateAsync(Package package)
+        public override async Task AddAsync(Package package)
         {
-            _context.Packages.Update(package);
-            await _context.SaveChangesAsync();
+            await base.AddAsync(package);
+            await SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Package package)
+        public override async Task UpdateAsync(Package package)
         {
-            _context.Packages.Remove(package);
-            await _context.SaveChangesAsync();
+            await base.UpdateAsync(package);
+            await SaveChangesAsync();
+        }
+
+        public override async Task DeleteAsync(Package package)
+        {
+            await base.DeleteAsync(package);
+            await SaveChangesAsync();
         }
     }
 }
