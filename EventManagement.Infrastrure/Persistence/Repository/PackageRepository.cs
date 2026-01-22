@@ -18,6 +18,13 @@ namespace EventManagement.Infrastrure.Persistence.Repository
         public new async Task<List<Package>> GetAllAsync()
             => await _dbSet.ToListAsync();
 
+        public override async Task<Package?> GetByIdAsync(Guid id)
+            => await _dbSet.AsNoTracking()
+                .Include(p => p.PackageItems) // Start with PackageItems
+                    .ThenInclude(pi => pi.Item) // Then the Item itself
+                        .ThenInclude(i => i.Asset) // Then the Item's Asset (optional, if needed for details)
+                .FirstOrDefaultAsync(p => p.PackageId == id);
+
         public override async Task AddAsync(Package package)
         {
             await base.AddAsync(package);

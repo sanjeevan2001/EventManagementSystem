@@ -89,7 +89,8 @@ namespace EventManagement.Presentation
                 options.AddPolicy("Frontend", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:4200")
+                        // .WithOrigins("http://localhost:4200")
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });

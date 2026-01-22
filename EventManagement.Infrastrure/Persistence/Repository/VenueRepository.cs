@@ -21,6 +21,7 @@ namespace EventManagement.Infrastrure.Persistence.Repository
         // Override GetByIdAsync to use AsNoTracking for read operations
         public override async Task<Venue?> GetByIdAsync(Guid id)
             => await _dbSet.AsNoTracking()
+                .Include(v => v.Events) // Include events
                 .FirstOrDefaultAsync(v => v.VenueId == id);
 
         // Override AddAsync to include SaveChanges

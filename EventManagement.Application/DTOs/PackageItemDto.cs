@@ -7,5 +7,6 @@ namespace EventManagement.Application.DTOs
         public Guid PackageId { get; set; }
         public Guid ItemId { get; set; }
         public int Quantity { get; set; }
+        public ItemDto Item { get; set; } = null!;
     }
 }

@@ -13,6 +13,7 @@ namespace EventManagement.Application.DTOs
         public int QuantityAvailable { get; set; }
         public Guid AssetId { get; set; }
         public string AssetName { get; set; } = string.Empty;
+        public AssetDto? Asset { get; set; }
         public string PackageName { get; set; } = string.Empty;
     }
 }

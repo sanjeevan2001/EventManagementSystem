@@ -11,7 +11,12 @@ namespace EventManagement.Application.Mapping
     {
         public PackageProfile()
         {
-            CreateMap<Package, PackageDto>().ReverseMap();
+            CreateMap<Package, PackageDto>()
+                .ReverseMap();
+            
+            CreateMap<PackageItem, PackageItemDto>().ReverseMap();
+            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<Asset, AssetDto>().ReverseMap();
         }
     }
 }
