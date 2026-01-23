@@ -28,6 +28,15 @@ namespace EventManagement.Infrastrure.Security
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
+        public Task<User?> GetByVerificationTokenAsync(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return Task.FromResult<User?>(null);
+            return context.Users
+                .Include(u => u.Admin)
+                .Include(u => u.Client)
+                .FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
+        }
+
         public Task<bool> UserExistsAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return Task.FromResult(false);

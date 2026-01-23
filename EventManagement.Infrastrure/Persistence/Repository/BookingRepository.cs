@@ -45,7 +45,7 @@ namespace EventManagement.Infrastrure.Persistence.Repository
                 .ToListAsync();
 
         public override async Task<Booking?> GetByIdAsync(Guid id)
-            => await _dbSet.AsNoTracking()
+            => await _dbSet
                 .Include(b => b.BookingPackages)
                 .Include(b => b.BookingItems)
                 .FirstOrDefaultAsync(b => b.BookingId == id);

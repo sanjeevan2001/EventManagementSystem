@@ -9,9 +9,7 @@ namespace EventManagement.Application.Features.venue.Queries.getVenueById
     {
         public getVenueByIdValidator()
         {
-            RuleFor(x => x.VenueId)
-                .NotEmpty()
-                .WithMessage("VenueId is required");
+            RuleFor(x => x.VenueId).NotEmpty().WithMessage("VenueId is required");
         }
     }
 }

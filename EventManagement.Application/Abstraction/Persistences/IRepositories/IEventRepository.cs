@@ -13,5 +13,8 @@ namespace EventManagement.Application.Abstraction.Persistences.IRepositories
         
         // Custom method specific to Event
         Task<List<Event>> GetByVenueIdAsync(Guid venueId);
+        
+        // Check availability
+        Task<bool> IsVenueAvailableAsync(Guid venueId, DateTime start, DateTime end, Guid? excludeEventId = null);
     }
 }

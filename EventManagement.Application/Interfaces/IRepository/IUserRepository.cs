@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EventManagement.Application.Interfaces.IRepository
 {
@@ -10,5 +11,7 @@ namespace EventManagement.Application.Interfaces.IRepository
         Task<bool> UserExistsAsync(string email);
         Task AddUserAsync(User user);
         Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByIdAsync(Guid userId);
+        Task UpdateAsync(User user);
     }
 }

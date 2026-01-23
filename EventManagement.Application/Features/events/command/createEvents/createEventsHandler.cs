@@ -41,6 +41,11 @@ namespace EventManagement.Application.Features.events.command.createEvents
                 var venue = await _venueRepo.GetByIdAsync(venueId);
                 if (venue != null)
                 {
+                    // Check availability
+                    if (!await _repo.IsVenueAvailableAsync(venue.VenueId, request.StartDate, request.EndDate))
+                    {
+                        throw new ValidationException($"Venue '{venue.Name}' is already booked for the selected time range.");
+                    }
                     venues.Add(venue);
                 }
             }

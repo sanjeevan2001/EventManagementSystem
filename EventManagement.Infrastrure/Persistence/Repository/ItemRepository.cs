@@ -23,10 +23,9 @@ namespace EventManagement.Infrastrure.Persistence.Repository
                 .ThenInclude(a => a!.Package!)
                 .ToListAsync();
 
-        // Override GetByIdAsync to include navigation properties
+        // Override GetByIdAsync to include navigation properties and support tracking
         public override async Task<Item?> GetByIdAsync(Guid id)
             => await _dbSet
-                .AsNoTracking()
                 .Include(i => i.Asset)
                 .ThenInclude(a => a!.Package!)
                 .FirstOrDefaultAsync(i => i.ItemId == id);

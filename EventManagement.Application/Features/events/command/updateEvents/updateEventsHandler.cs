@@ -50,7 +50,15 @@ namespace EventManagement.Application.Features.events.command.updateEvents
             foreach (var venueId in request.VenueIds)
             {
                var v = await _venueRepo.GetByIdAsync(venueId);
-               if (v != null) ev.Venues.Add(v);
+               if (v != null) 
+               {
+                   // Check availability (exclude current event)
+                   if (!await _repo.IsVenueAvailableAsync(v.VenueId, request.StartDate, request.EndDate, request.EventId))
+                   {
+                       throw new ValidationException($"Venue '{v.Name}' is already booked for the selected time range.");
+                   }
+                   ev.Venues.Add(v);
+               }
             }
 
             // Ensure at least one valid venue exists
@@ -59,7 +67,7 @@ namespace EventManagement.Application.Features.events.command.updateEvents
                 throw new ValidationException("At least one valid venue must be selected");
             }
             
-            await _repo.UpdateAsync(ev);
+            await _repo.SaveChangesAsync();
             return _mapper.Map<EventDto>(ev);
         }
     }

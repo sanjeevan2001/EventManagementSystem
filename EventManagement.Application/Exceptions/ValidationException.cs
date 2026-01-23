@@ -26,3 +26,4 @@ namespace EventManagement.Application.Exceptions
         }
     }
 }
+

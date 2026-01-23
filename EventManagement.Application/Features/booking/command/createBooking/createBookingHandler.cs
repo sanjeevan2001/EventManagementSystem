@@ -29,6 +29,8 @@ namespace EventManagement.Application.Features.booking.command.createBooking
                 request.EventId,
                 request.UserId,
                 request.AttendeesCount,
+                request.Packages,
+                request.Items,
                 cancellationToken);
 
             return _mapper.Map<BookingDto>(booking);

@@ -13,17 +13,13 @@ namespace EventManagement.Application.Features.venue.Queries.getVenueById
         private readonly IVenueRepository _venueRepository;
         private readonly IMapper _mapper;
 
-        public getVenueByIdHandler(
-            IVenueRepository venueRepository,
-            IMapper mapper)
+        public getVenueByIdHandler(IVenueRepository venueRepository, IMapper mapper)
         {
             _venueRepository = venueRepository;
             _mapper = mapper;
         }
 
-        public async Task<VenueDto?> Handle(
-            getVenueByIdQuery request,
-            CancellationToken cancellationToken)
+        public async Task<VenueDto?> Handle(getVenueByIdQuery request, CancellationToken cancellationToken)
         {
             var venue = await _venueRepository.GetByIdAsync(request.VenueId);
 

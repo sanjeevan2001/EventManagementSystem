@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using EventManagement.Application.Features.booking.command.createBooking;
+
 namespace EventManagement.Infrastrure.Services
 {
     public class BookingWorkflowService : IBookingWorkflowService
@@ -19,7 +21,7 @@ namespace EventManagement.Infrastrure.Services
             _context = context;
         }
 
-        public async Task<Booking> CreateBookingAsync(Guid eventId, Guid userId, int attendeesCount, CancellationToken cancellationToken)
+        public async Task<Booking> CreateBookingAsync(Guid eventId, Guid userId, int attendeesCount, List<BookingPackageRequest>? packages, List<BookingItemRequest>? items, CancellationToken cancellationToken)
         {
             if (eventId == Guid.Empty) throw new ArgumentException("EventId is required", nameof(eventId));
             if (userId == Guid.Empty) throw new ArgumentException("UserId is required", nameof(userId));
@@ -32,6 +34,9 @@ namespace EventManagement.Infrastrure.Services
 
             if (ev == null) throw new KeyNotFoundException("Event not found");
             if (ev.Venues == null || !ev.Venues.Any()) throw new KeyNotFoundException("Venue not found for the event");
+            
+            if (ev.EndDate < DateTime.UtcNow)
+                throw new InvalidOperationException("Cannot book a past event");
 
             var totalVenueCapacity = ev.Venues.Sum(v => v.Capacity);
             var capacityLimit = Math.Min(ev.MaxAttendees, totalVenueCapacity);
@@ -53,6 +58,36 @@ namespace EventManagement.Infrastrure.Services
                 Status = BookingStatus.Pending,
                 BookingDate = DateTime.UtcNow
             };
+
+            // Add Packages
+            if (packages != null && packages.Any())
+            {
+                foreach (var p in packages)
+                {
+                    booking.BookingPackages.Add(new BookingPackage
+                    {
+                        BookingId = booking.BookingId,
+                        PackageId = p.PackageId
+                    });
+                }
+            }
+
+            // Add Items
+            if (items != null && items.Any())
+            {
+                foreach (var i in items)
+                {
+                    if (i.Quantity > 0)
+                    {
+                        booking.BookingItems.Add(new BookingItem
+                        {
+                            BookingId = booking.BookingId,
+                            ItemId = i.ItemId,
+                            Quantity = i.Quantity
+                        });
+                    }
+                }
+            }
 
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync(cancellationToken);

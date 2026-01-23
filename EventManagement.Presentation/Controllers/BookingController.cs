@@ -30,7 +30,7 @@ namespace EventManagement.Presentation.Controllers
             if (!Guid.TryParse(userIdValue, out var userId))
                 return Unauthorized();
 
-            var result = await _mediator.Send(new createBookingCommand(command.EventId, command.AttendeesCount, userId));
+            var result = await _mediator.Send(new createBookingCommand(command.EventId, command.AttendeesCount, userId, command.Packages, command.Items));
             return Ok(result);
         }
 

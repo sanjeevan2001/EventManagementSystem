@@ -103,7 +103,7 @@ namespace EventManagement.Infrastrure.Data
 
             modelBuilder.Entity<Asset>()
                 .HasOne(a => a.Package)
-                .WithMany()
+                .WithMany(p => p.Assets)
                 .HasForeignKey(a => a.PackageId)
                 .OnDelete(DeleteBehavior.Restrict);
 

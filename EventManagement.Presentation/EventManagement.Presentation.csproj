@@ -8,15 +8,6 @@
     <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
-  <!--
-    During development, avoid writing build outputs to the same folder as a running instance
-    to reduce "file locked by" errors. Debug outputs are redirected to a separate folder.
-  -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug.Dev\</OutputPath>
-    <IntermediateOutputPath>obj\Debug.Dev\</IntermediateOutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="AutoMapper" Version="11.0.0" />
@@ -41,9 +32,20 @@
   </ItemGroup>
 
   <!-- Try to stop any process that has this project's DLL loaded before building to avoid file locks. -->
+  <!--
   <Target Name="KillLockingProcesses" BeforeTargets="PrepareForBuild">
     <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { $dll = '$(MSBuildProjectDirectory)\\bin\\Debug\\net10.0\\EventManagement.Presentation.dll'; Get-Process | ForEach-Object { try { foreach ($m in $_.Modules) { if ($m.FileName -eq $dll) { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } } catch {} } } catch {};&quot;" />
     <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { Get-Process -Name 'EventManagement.Presentation' -ErrorAction SilentlyContinue | ForEach-Object { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } catch {};&quot;" />
+    <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { $appDll = '$(MSBuildProjectDirectory)\\..\\EventManagement.Application\\bin\\Debug\\net10.0\\EventManagement.Application.dll'; Get-Process | ForEach-Object { try { foreach ($m in $_.Modules) { if ($m.FileName -eq $appDll) { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } } catch {} } } catch {};&quot;" />
   </Target>
+  -->
 
+  <!--
+    During development, avoid writing build outputs to the same folder as a running instance
+    to reduce "file locked by" errors. Debug outputs are redirected to a separate folder.
+  -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug.Build\</OutputPath>
+    <IntermediateOutputPath>obj\Debug.Build\</IntermediateOutputPath>
+  </PropertyGroup>
 </Project>

@@ -10,6 +10,7 @@ namespace EventManagement.Application.Abstraction.Persistences.IRepositories
     {
         User? GetByEmail(string email);
         Task<User?> GetByIdWithDetailsAsync(Guid userId);
+        Task<User?> GetByVerificationTokenAsync(string token);
         Task<bool> UserExistsAsync(string email);
         Task AddUserAsync(User user);
         Task AddAdminAsync(Admin admin);

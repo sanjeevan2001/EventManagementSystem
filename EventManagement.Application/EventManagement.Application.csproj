@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UseAppHost>false</UseAppHost>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,5 +25,21 @@
     <Folder Include="Features\events\DTOs\" />
     <Folder Include="Features\item\DTOs\" />
   </ItemGroup>
+
+  <!-- Try to stop any process that has this project's DLL loaded before building to avoid file locks. -->
+  <!--
+  <Target Name="KillLockingProcesses" BeforeTargets="PrepareForBuild">
+    <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { $dll = '$(MSBuildProjectDirectory)\\bin\\Debug\\net10.0\\EventManagement.Application.dll'; Get-Process | ForEach-Object { try { foreach ($m in $_.Modules) { if ($m.FileName -eq $dll) { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } } catch {} } } catch {};&quot;" />
+    
+<Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { Get-Process -Name 'EventManagement.Presentation' -ErrorAction SilentlyContinue | ForEach-Object { Write-Host ('Stopping process {0} (PID {1})' -f $_.ProcessName,$_.Id); Stop-Process -Id $_.Id -Force } } catch {};&quot;" />
+    <Exec ContinueOnError="true" Command="powershell -NoProfile -Command &quot;try { Get-Process -Name 'dotnet' -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.Id -Force } } catch {};&quot;" />
+  </Target>
+  -->
+
+  <!-- During development, redirect Debug outputs to avoid colliding with a running instance -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug.Build\</OutputPath>
+    <IntermediateOutputPath>obj\Debug.Build\</IntermediateOutputPath>
+  </PropertyGroup>
 
 </Project>
