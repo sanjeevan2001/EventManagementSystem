@@ -114,8 +114,6 @@ namespace EventManagement.Presentation
 
 
 
-            var app = builder.Build();
-
             // If configured ports are in use, pick fallback free ports to avoid AddressInUse on startup
             try
             {
@@ -133,16 +131,16 @@ namespace EventManagement.Presentation
                     {
                         if (p.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (int.TryParse(new Uri(p).Port.ToString(), out var parsed)) httpPort = parsed;
+                            httpPort = new Uri(p).Port;
                         }
                         else if (p.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (int.TryParse(new Uri(p).Port.ToString(), out var parsed)) httpsPort = parsed;
+                            httpsPort = new Uri(p).Port;
                         }
                     }
                 }
 
-                bool IsPortFree(int port)
+                static bool IsPortFree(int port)
                 {
                     try
                     {
@@ -188,14 +186,13 @@ namespace EventManagement.Presentation
                 var urls = $"http://127.0.0.1:{finalHttp};https://127.0.0.1:{finalHttps}";
                 Console.WriteLine($"Using URLs: {urls}");
                 builder.WebHost.UseUrls(urls);
-
-                // rebuild host with updated urls
-                app = builder.Build();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Port check failed: {ex.Message}");
             }
+
+            var app = builder.Build();
 
             // Seed Database
             using (var scope = app.Services.CreateScope())
@@ -209,18 +206,46 @@ namespace EventManagement.Presentation
 
 
             // Configure the HTTP request pipeline.
+
             if (app.Environment.IsDevelopment())
             {
-                //app.MapOpenApi();
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
+                // Add a lightweight middleware to provide a fallback swagger.json if the swagger generator fails at runtime.
+                app.Use(async (ctx, next) =>
                 {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
-                    options.RoutePrefix = string.Empty;
-                });
-            }
+                    if (ctx.Request.Path.StartsWithSegments("/swagger/v1/swagger.json"))
+                    {
+                        try
+                        {
+                            await next();
+                        }
+                        catch (Exception)
+                        {
+                            ctx.Response.StatusCode = 200;
+                            ctx.Response.ContentType = "application/json";
+                            var fallback = "{\"openapi\":\"3.0.1\",\"info\":{\"title\":\"My API\",\"version\":\"v1\"},\"paths\":{}}";
+                            await ctx.Response.WriteAsync(fallback);
+                        }
+                        return;
+                    }
 
-            if (!app.Environment.IsDevelopment())
+                    await next();
+                });
+
+                try
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI(options =>
+                    {
+                        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
+                        options.RoutePrefix = string.Empty;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Swagger middleware failed to initialize: {ex.Message}");
+                }
+            }
+            else
             {
                 app.UseHttpsRedirection();
             }
